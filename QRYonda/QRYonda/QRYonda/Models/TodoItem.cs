@@ -8,6 +8,8 @@ namespace QRYonda.Models
     {
         string id;
         string name;
+        string image;
+        string url;
         bool done;
 
         [JsonProperty(PropertyName = "id")]
@@ -22,6 +24,20 @@ namespace QRYonda.Models
         {
             get { return name; }
             set { name = value; }
+        }
+
+        [JsonProperty(PropertyName = "image")]
+        public string Image
+        {
+            get { return image; }
+            set { image = value; }
+        }
+
+        [JsonProperty(PropertyName = "url")]
+        public string Url
+        {
+            get { return url; }
+            set { url = value; }
         }
 
         [JsonProperty(PropertyName = "complete")]

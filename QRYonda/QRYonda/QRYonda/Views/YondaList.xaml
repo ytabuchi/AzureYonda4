@@ -50,17 +50,19 @@
           <ViewCell>
             <ViewCell.ContextActions>
               <MenuItem Clicked="OnComplete"
-                        Text="Yonda"
+                        Text="Have read"
                         CommandParameter="{Binding .}" />
             </ViewCell.ContextActions>
             <StackLayout HorizontalOptions="StartAndExpand"
                          Orientation="Horizontal"
-                         Padding="15,5,0,0">
-              <StackLayout Padding="5,0,0,0"
-                           VerticalOptions="StartAndExpand"
-                           Orientation="Vertical">
-                <Label Text="{Binding Name}" />
-              </StackLayout>
+                         Padding="18,5,0,5"
+								         Spacing="8">
+							<Image Source="{Binding Image}"
+									   HeightRequest="80" />
+              <Label Text="{Binding Name}" 
+								     FontSize="14"
+									   TextColor="#555"
+								     VerticalTextAlignment="Center" />
             </StackLayout>
           </ViewCell>
         </DataTemplate>

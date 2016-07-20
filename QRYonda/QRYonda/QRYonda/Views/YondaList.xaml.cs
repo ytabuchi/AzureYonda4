@@ -13,10 +13,10 @@ namespace QRYonda.Views
     public partial class YondaList : ContentPage
     {
         TodoItemManager manager;
-        ZXingScannerPage scanPage;
         ItemLookup itemLookup = new ItemLookup();
         string str = "";
-        string itemText = "";
+        //string itemInfo = "";
+        TodoItem itemInfo = new TodoItem();
 
         public YondaList()
         {
@@ -93,13 +93,19 @@ namespace QRYonda.Views
                     {
                         str = result.Text;
 
-                        itemText = await itemLookup.Lookup(str);
+                        itemInfo = await itemLookup.Lookup(str);
 
-                        if (await DisplayAlert("Add", $"Add {itemText} to azure?", "Yes", "No"))
+                        //if (itemInfo != "")
+                        if (itemInfo != null)
                         {
-                            var todo = new TodoItem { Name = itemText };
-                            await AddItem(todo);
+                            if (await DisplayAlert("Add", $"Add {itemInfo.Name} to azure?", "Yes", "No"))
+                            {
+                                //var todo = new TodoItem { Name = itemInfo.Name, Image = itemInfo.Image, Url = itemInfo.Url };
+                                await AddItem(itemInfo);
+                            }
                         }
+                        else
+                            await DisplayAlert("Error", "Invalid Number", "OK");
 
                         await Navigation.PopModalAsync();
 
@@ -111,41 +117,53 @@ namespace QRYonda.Views
             }
             else 
             {
-                itemText = await itemLookup.Lookup(str);
+                itemInfo = await itemLookup.Lookup(str);
 
-                if (await DisplayAlert("Add", $"Add {itemText} to azure?", "Yes", "No"))
+                if (itemInfo != null)
                 {
-                    var todo = new TodoItem { Name = itemText };
-                    await AddItem(todo);
+                    if (await DisplayAlert("Add", $"Add {itemInfo.Name} to azure?", "Yes", "No"))
+                    {
+                        await AddItem(itemInfo);
+                    }
                 }
+                else
+                    await DisplayAlert("Error", "Invalid Number", "OK");
+
             }
 
         }
 
         // Event handlers
-        public async void OnSelected(object sender, SelectedItemChangedEventArgs e)
+        public void OnSelected(object sender, SelectedItemChangedEventArgs e)
         {
             var todo = e.SelectedItem as TodoItem;
-            if (Device.OS != TargetPlatform.iOS && todo != null)
-            {
-                // Not iOS - the swipe-to-delete is discoverable there
-                if (Device.OS == TargetPlatform.Android)
-                {
-                    await DisplayAlert(todo.Name, "Press-and-hold to complete task " + todo.Name, "Got it!");
-                }
-                else
-                {
-                    // Windows, not all platforms support the Context Actions yet
-                    if (await DisplayAlert("Mark completed?", "Do you wish to complete " + todo.Name + "?", "Complete", "Cancel"))
-                    {
-                        await CompleteItem(todo);
-                    }
-                }
-            }
+            todoList.SelectedItem = null;
+            // Open amazon link with browser.
+
+            if (todo != null)
+                Device.OpenUri(new Uri(todo.Url));
+
+            //if (Device.OS != TargetPlatform.iOS && todo != null)
+            //{
+            //    // Not iOS - the swipe-to-delete is discoverable there
+            //    if (Device.OS == TargetPlatform.Android)
+            //    {
+            //        await DisplayAlert(todo.Name, "Press-and-hold to complete task " + todo.Name, "Got it!");
+            //    }
+            //    else
+            //    {
+            //        // Windows, not all platforms support the Context Actions yet
+            //        if (await DisplayAlert("Mark completed?", "Do you wish to complete " + todo.Name + "?", "Complete", "Cancel"))
+            //        {
+            //            await CompleteItem(todo);
+            //        }
+            //    }
+            //}
 
             // prevents background getting highlighted
-            todoList.SelectedItem = null;
+
         }
+
 
         // http://developer.xamarin.com/guides/cross-platform/xamarin-forms/working-with/listview/#context
         public async void OnComplete(object sender, EventArgs e)

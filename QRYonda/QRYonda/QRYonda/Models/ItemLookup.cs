@@ -44,14 +44,15 @@ namespace QRYonda.Models
         private const string ID_TYPE = "ISBN"; // Added from sample
         private string ITEM_ID = "";
 
-        public async Task<string> Lookup(string isbn)
+        public async Task<TodoItem> Lookup(string isbn)
         {
             if (isbn.Length == 13)
                 this.ITEM_ID = isbn;
             else if (isbn.Length == 10)
                 this.ITEM_ID = IsbnConverter.ConvertToISBN13(isbn);
             else
-                return "";
+                //return "";
+                return null;
 
             SignedRequestHelper helper = new SignedRequestHelper(
                 MY_AWS_ASSOCIATE_TAG,
@@ -64,7 +65,8 @@ namespace QRYonda.Models
              * The helper supports two forms of requests - dictionary form and query string form.
              */
             String requestUrl;
-            String itemInfo;
+            //String itemInfo;
+            TodoItem itemInfo;
 
             /*
              * Here is an ItemLookup example where the request is stored as a dictionary.
@@ -79,15 +81,15 @@ namespace QRYonda.Models
             requestUrl = helper.Sign(r1);
             itemInfo = await FetchTitle(requestUrl);
 
-            System.Diagnostics.Debug.WriteLine("Method 1: ItemLookup Dictionary form.");
-            System.Diagnostics.Debug.WriteLine("Title is \"" + itemInfo + "\"");
+            System.Diagnostics.Debug.WriteLine("ItemLookup Dictionary form.");
+            System.Diagnostics.Debug.WriteLine($"ItemInfo is title: {itemInfo.Name}, image: {itemInfo.Image}");
 
             return itemInfo;
         }
 
         // Use XDocument indeed with XmlDocument.
         // https://forums.xamarin.com/discussion/comment/140386/#Comment_140386
-        private static async Task<string> FetchTitle(string url)
+        private static async Task<TodoItem> FetchTitle(string url)
         {
             try
             {
@@ -102,7 +104,8 @@ namespace QRYonda.Models
                         var itemImageUrl = info.Items.Item.MediumImage.URL;
                         var itemUrl = info.Items.Item.DetailPageURL;
 
-                        return itemTitle;
+                        //return itemTitle;
+                        return new TodoItem { Name = itemTitle, Image = itemImageUrl, Url = itemUrl};
                     }
                 }
             }
