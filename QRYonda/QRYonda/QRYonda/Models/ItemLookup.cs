@@ -35,9 +35,9 @@ namespace QRYonda.Models
 {
     public class ItemLookup
     {
-        private const string MY_AWS_ASSOCIATE_TAG = "ytabuchi22-22"; // Added from sample
-        private const string MY_AWS_ACCESS_KEY_ID = "AKIAI7KTWOOFWYLKFECQ";
-        private const string MY_AWS_SECRET_KEY = "XFuby07wNFD2hQCu7vcCGvKR+ebO2nPEM7JH8JOk";
+        private const string MY_AWS_ASSOCIATE_TAG = "xxxxxxxx"; // Added from sample
+        private const string MY_AWS_ACCESS_KEY_ID = "xxxxxxxx";
+        private const string MY_AWS_SECRET_KEY = "xxxxxxxx";
         private const string DESTINATION = "webservices.amazon.co.jp";  // Changed from sample
 
         private const string NAMESPACE = "http://webservices.amazon.com/AWSECommerceService/2011-08-01"; // Changed from sample
