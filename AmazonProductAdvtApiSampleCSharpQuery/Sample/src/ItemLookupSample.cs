@@ -31,9 +31,9 @@ namespace AmazonProductAdvtApi
 {
     class ItemLookupSample
     {
-        private const string MY_AWS_ASSOCIATE_TAG = "ytabuchi22-22"; // Add.
-        private const string MY_AWS_ACCESS_KEY_ID = "AKIAIFKFXIIDJIYP5GFA";
-        private const string MY_AWS_SECRET_KEY = "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";
+        private const string MY_AWS_ASSOCIATE_TAG = "xxxxx"; // Add.
+        private const string MY_AWS_ACCESS_KEY_ID = "xxxxx";
+        private const string MY_AWS_SECRET_KEY = "xxxxx";
         private const string DESTINATION = "webservices.amazon.co.jp";  // Change to Japan.
 
         private const string NAMESPACE = "http://webservices.amazon.com/AWSECommerceService/2011-08-01"; // Change to latest.
