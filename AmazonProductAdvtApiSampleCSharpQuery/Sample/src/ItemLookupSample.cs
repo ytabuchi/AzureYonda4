@@ -26,6 +26,9 @@ using System.Net;
 using System.IO;
 using System.Xml;
 using System.Xml.XPath;
+using System.Threading.Tasks;
+using System.Net.Http;
+using System.Xml.Serialization;
 
 namespace AmazonProductAdvtApi
 {
@@ -73,7 +76,10 @@ namespace AmazonProductAdvtApi
             //r1["Latin1Chars"] = "ĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĲĳ";
 
             requestUrl = helper.Sign(r1);
-            title = FetchTitle(requestUrl);
+            // 仕方ないので。
+            var task = FetchTitle(requestUrl);
+            task.Wait();
+            title = task.Result;
 
             System.Console.WriteLine("Method 1: ItemLookup Dictionary form.");
             System.Console.WriteLine("Title is \"" + title + "\"");
@@ -155,25 +161,25 @@ namespace AmazonProductAdvtApi
             //System.Console.ReadLine();
         }
 
-        private static string FetchTitle(string url)
+        private static async Task<string> FetchTitle(string url)
         {
             try
             {
-                WebRequest request = HttpWebRequest.Create(url);
-                WebResponse response = request.GetResponse();
-                XmlDocument doc = new XmlDocument();
-                doc.Load(response.GetResponseStream());
-
-                XmlNodeList errorMessageNodes = doc.GetElementsByTagName("Message", NAMESPACE);
-                if (errorMessageNodes != null && errorMessageNodes.Count > 0)
+                // HttpClientでXMLを一気に取得する方法に変更
+                using (var client = new HttpClient())
                 {
-                    String message = errorMessageNodes.Item(0).InnerText;
-                    return "Error: " + message + " (but signature worked)";
-                }
+                    using (var reader = new StreamReader(await client.GetStreamAsync(url)))
+                    {
+                        var deserializer = new XmlSerializer(typeof(ItemLookupResponse));
+                        var info = deserializer.Deserialize(reader) as ItemLookupResponse;
 
-                XmlNode titleNode = doc.GetElementsByTagName("Title", NAMESPACE).Item(0);
-                string title = titleNode.InnerText;
-                return title;
+                        var itemTitle = info.Items.Item.ItemAttributes.Title;
+                        var itemImageUrl = info.Items.Item.MediumImage.URL; // ついでに
+                        var itemUrl = info.Items.Item.DetailPageURL; // ついでに
+
+                        return itemTitle;
+                    }
+                }
             }
             catch (Exception e)
             {
