@@ -31,17 +31,25 @@ namespace AmazonProductAdvtApi
 {
     class ItemLookupSample
     {
-        private const string MY_AWS_ACCESS_KEY_ID = "YOUR_AWS_ACCESS_KEY_ID";
-        private const string MY_AWS_SECRET_KEY    = "YOUR_AWS_SECRET_KEY";
-        private const string DESTINATION          = "ecs.amazonaws.com";
-        
-        private const string NAMESPACE = "http://webservices.amazon.com/AWSECommerceService/2009-03-31";
-        private const string ITEM_ID   = "0545010225";
+        private const string MY_AWS_ASSOCIATE_TAG = "ytabuchi22-22"; // Add.
+        private const string MY_AWS_ACCESS_KEY_ID = "AKIAIFKFXIIDJIYP5GFA";
+        private const string MY_AWS_SECRET_KEY = "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";
+        private const string DESTINATION = "webservices.amazon.co.jp";  // Change to Japan.
+
+        private const string NAMESPACE = "http://webservices.amazon.com/AWSECommerceService/2011-08-01"; // Change to latest.
+        private const string ID_TYPE = "ISBN"; // Add.
+        private const string ITEM_ID = "9784822298616";
 
         public static void Main()
         {
-            SignedRequestHelper helper = new SignedRequestHelper(MY_AWS_ACCESS_KEY_ID, MY_AWS_SECRET_KEY, DESTINATION);
-
+            SignedRequestHelper helper = new SignedRequestHelper(
+                MY_AWS_ASSOCIATE_TAG, // Add.
+                MY_AWS_ACCESS_KEY_ID,
+                MY_AWS_SECRET_KEY,
+                DESTINATION,
+                ID_TYPE // Add.
+            ); 
+            
             /*
              * The helper supports two forms of requests - dictionary form and query string form.
              */
@@ -53,16 +61,16 @@ namespace AmazonProductAdvtApi
              */
             IDictionary<string, string> r1 = new Dictionary<string, String>();
             r1["Service"] = "AWSECommerceService";
-            r1["Version"] = "2009-03-31";
+            r1["Version"] = "22011-08-01"; // Change to latest.
             r1["Operation"] = "ItemLookup";
             r1["ItemId"] = ITEM_ID;
-            r1["ResponseGroup"] = "Small";
+            r1["ResponseGroup"] = "Images,Small"; // Change to get image url.
 
             /* Random params for testing */
-            r1["AnUrl"] = "http://www.amazon.com/books";
-            r1["AnEmailAddress"] = "foobar@nowhere.com";
-            r1["AUnicodeString"] = "αβγδεٵٶٷٸٹٺチャーハン叉焼";
-            r1["Latin1Chars"] = "ĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĲĳ";
+            //r1["AnUrl"] = "http://www.amazon.com/books";
+            //r1["AnEmailAddress"] = "foobar@nowhere.com";
+            //r1["AUnicodeString"] = "αβγδεٵٶٷٸٹٺチャーハン叉焼";
+            //r1["Latin1Chars"] = "ĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĲĳ";
 
             requestUrl = helper.Sign(r1);
             title = FetchTitle(requestUrl);
@@ -71,80 +79,80 @@ namespace AmazonProductAdvtApi
             System.Console.WriteLine("Title is \"" + title + "\"");
             System.Console.WriteLine();
 
-            /*
-             * Here is a CartCreate example where the request is stored as a dictionary.
-             */
-            IDictionary<string, string> r2 = new Dictionary<string, String>();
-            r2["Service"] = "AWSECommerceService";
-            r2["Version"] = "2009-03-31";
-            r2["Operation"] = "CartCreate";
-            r2["Item.1.OfferListingId"] = "Ho46Hryi78b4j6Qa4HdSDD0Jhan4MILFeRSa9mK+6ZTpeCBiw0mqMjOG7ZsrzvjqUdVqvwVp237ZWaoLqzY11w==";
-            r2["Item.1.Quantity"] = "1";
+            ///*
+            // * Here is a CartCreate example where the request is stored as a dictionary.
+            // */
+            //IDictionary<string, string> r2 = new Dictionary<string, String>();
+            //r2["Service"] = "AWSECommerceService";
+            //r2["Version"] = "2009-03-31";
+            //r2["Operation"] = "CartCreate";
+            //r2["Item.1.OfferListingId"] = "Ho46Hryi78b4j6Qa4HdSDD0Jhan4MILFeRSa9mK+6ZTpeCBiw0mqMjOG7ZsrzvjqUdVqvwVp237ZWaoLqzY11w==";
+            //r2["Item.1.Quantity"] = "1";
 
-            requestUrl = helper.Sign(r2);
-            title = FetchTitle(requestUrl);
+            //requestUrl = helper.Sign(r2);
+            //title = FetchTitle(requestUrl);
 
-            System.Console.WriteLine("Method 1: CartCreate Dictionary form.");
-            System.Console.WriteLine("Cart Item Title is \"" + title + "\"");
-            System.Console.WriteLine();
+            //System.Console.WriteLine("Method 1: CartCreate Dictionary form.");
+            //System.Console.WriteLine("Cart Item Title is \"" + title + "\"");
+            //System.Console.WriteLine();
 
-            /*
-             * Here is an example where the request is stored as a query-string:
-             */
+            ///*
+            // * Here is an example where the request is stored as a query-string:
+            // */
 
-            /*
-             * string requestString = "Service=AWSECommerceService&Version=2009-03-31&Operation=ItemLookup&ResponseGroup=Small&ItemId=" + ITEM_ID;
-             */
-            System.Console.WriteLine("Method 2: Query String form.");
+            ///*
+            // * string requestString = "Service=AWSECommerceService&Version=2009-03-31&Operation=ItemLookup&ResponseGroup=Small&ItemId=" + ITEM_ID;
+            // */
+            //System.Console.WriteLine("Method 2: Query String form.");
 
-            String[] Keywords = new String[] {
-                "surprise!",
-                "café",
-                "black~berry",
-                "James (Jim) Collins",
-                "münchen",
-                "harry potter (paperback)",
-                "black*berry",
-                "finger lickin' good",
-                "!\"#$%'()*+,-./:;<=>?@[\\]^_`{|}~",
-                "αβγδε",
-                "ٵٶٷٸٹٺ",
-                "チャーハン",
-                "叉焼",
-            };
+            //String[] Keywords = new String[] {
+            //    "surprise!",
+            //    "café",
+            //    "black~berry",
+            //    "James (Jim) Collins",
+            //    "münchen",
+            //    "harry potter (paperback)",
+            //    "black*berry",
+            //    "finger lickin' good",
+            //    "!\"#$%'()*+,-./:;<=>?@[\\]^_`{|}~",
+            //    "αβγδε",
+            //    "ٵٶٷٸٹٺ",
+            //    "チャーハン",
+            //    "叉焼",
+            //};
 
-            foreach (String keyword in Keywords)
-            {
-                String requestString = "Service=AWSECommerceService" 
-                    + "&Version=2009-03-31"
-                    + "&Operation=ItemSearch"
-                    + "&SearchIndex=Books"
-                    + "&ResponseGroup=Small"
-                    + "&Keywords=" + keyword
-                    ;
-                requestUrl = helper.Sign(requestString);
-                title = FetchTitle(requestUrl);
+            //foreach (String keyword in Keywords)
+            //{
+            //    String requestString = "Service=AWSECommerceService" 
+            //        + "&Version=2009-03-31"
+            //        + "&Operation=ItemSearch"
+            //        + "&SearchIndex=Books"
+            //        + "&ResponseGroup=Small"
+            //        + "&Keywords=" + keyword
+            //        ;
+            //    requestUrl = helper.Sign(requestString);
+            //    title = FetchTitle(requestUrl);
 
-                System.Console.WriteLine("Keyword=\"" + keyword + "\"; Title=\"" + title + "\"");
-                System.Console.WriteLine();
-            }
+            //    System.Console.WriteLine("Keyword=\"" + keyword + "\"; Title=\"" + title + "\"");
+            //    System.Console.WriteLine();
+            //}
 
-            String cartCreateRequestString = 
-                "Service=AWSECommerceService"
-                + "&Version=2009-03-31"
-                + "&Operation=CartCreate"
-                + "&Item.1.OfferListingId=Ho46Hryi78b4j6Qa4HdSDD0Jhan4MILFeRSa9mK%2B6ZTpeCBiw0mqMjOG7ZsrzvjqUdVqvwVp237ZWaoLqzY11w%3D%3D"
-                + "&Item.1.Quantity=1"
-                ;
-            requestUrl = helper.Sign(cartCreateRequestString);
-            title = FetchTitle(requestUrl);
+            //String cartCreateRequestString = 
+            //    "Service=AWSECommerceService"
+            //    + "&Version=2009-03-31"
+            //    + "&Operation=CartCreate"
+            //    + "&Item.1.OfferListingId=Ho46Hryi78b4j6Qa4HdSDD0Jhan4MILFeRSa9mK%2B6ZTpeCBiw0mqMjOG7ZsrzvjqUdVqvwVp237ZWaoLqzY11w%3D%3D"
+            //    + "&Item.1.Quantity=1"
+            //    ;
+            //requestUrl = helper.Sign(cartCreateRequestString);
+            //title = FetchTitle(requestUrl);
 
-            System.Console.WriteLine("Cart Item Title=\"" + title + "\"");
-            System.Console.WriteLine();
+            //System.Console.WriteLine("Cart Item Title=\"" + title + "\"");
+            //System.Console.WriteLine();
 
 
-            System.Console.WriteLine("Hit Enter to end");
-            System.Console.ReadLine();
+            //System.Console.WriteLine("Hit Enter to end");
+            //System.Console.ReadLine();
         }
 
         private static string FetchTitle(string url)
