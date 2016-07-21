@@ -23,7 +23,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Web;
-using System.Security.Cryptography;
+using PCLCrypto; // Add
+//using System.Security.Cryptography;
 
 namespace AmazonProductAdvtApi
 {
@@ -34,7 +35,8 @@ namespace AmazonProductAdvtApi
         private string akid;
         private string idtype; // Add.
         private byte[] secret;
-        private HMAC signer;
+        //private HMAC signer; // Change using PCLCrypto.
+        private CryptographicHash hasher; // Add.
 
         private const string REQUEST_URI = "/onca/xml";
         private const string REQUEST_METHOD = "GET";
@@ -58,7 +60,13 @@ namespace AmazonProductAdvtApi
             this.akid = awsAccessKeyId;
             this.idtype = idtype; // Add.
             this.secret = Encoding.UTF8.GetBytes(awsSecretKey);
-            this.signer = new HMACSHA256(this.secret);
+            //this.signer = new HMACSHA256(this.secret);
+
+            // See: https://github.com/AArnott/PCLCrypto/wiki/Crypto-Recipes
+            // See: Get the MAC for a buffer (HMAC-SHA1, HMAC-SHA256, etc.)
+            // ハッシュ化するアルゴリズム（Amazonの場合はHMAC-SHA256）を決めて、SecretKeyを用いて`hasher`をインスタンス化します。
+            var algorithm = WinRTCrypto.MacAlgorithmProvider.OpenAlgorithm(MacAlgorithm.HmacSha256);
+            this.hasher = algorithm.CreateHash(this.secret);
         }
 
         /*
@@ -98,7 +106,14 @@ namespace AmazonProductAdvtApi
             byte[] toSign = Encoding.UTF8.GetBytes(stringToSign);
 
             // Compute the signature and convert to Base64.
-            byte[] sigBytes = signer.ComputeHash(toSign);
+            //byte[] sigBytes = signer.ComputeHash(toSign);
+            //string signature = Convert.ToBase64String(sigBytes);
+
+            // PCLCryptoを使用して、リクエストURLをhasherでハッシュ化して署名を作成する処理
+            // See: https://github.com/AArnott/PCLCrypto/wiki/Crypto-Recipes
+            // See: Get the MAC for a buffer (HMAC-SHA1, HMAC-SHA256, etc.)
+            hasher.Append(toSign);
+            byte[] sigBytes = hasher.GetValueAndReset();
             string signature = Convert.ToBase64String(sigBytes);
             
             // now construct the complete URL and return to caller.
