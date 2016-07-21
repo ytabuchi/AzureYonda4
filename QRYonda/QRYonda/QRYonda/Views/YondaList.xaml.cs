@@ -88,26 +88,26 @@ namespace QRYonda.Views
                 {
                     // スキャン停止
                     scanPage.IsScanning = false;
+                    System.Diagnostics.Debug.WriteLine("Scanned");
 
                     Device.BeginInvokeOnMainThread(async () =>
                     {
+                        await Navigation.PopModalAsync();
+
                         str = result.Text;
 
                         itemInfo = await itemLookup.Lookup(str);
+                        System.Diagnostics.Debug.WriteLine("Lookuped");
 
-                        //if (itemInfo != "")
                         if (itemInfo != null)
                         {
                             if (await DisplayAlert("Add", $"Add {itemInfo.Name} to azure?", "Yes", "No"))
-                            {
-                                //var todo = new TodoItem { Name = itemInfo.Name, Image = itemInfo.Image, Url = itemInfo.Url };
                                 await AddItem(itemInfo);
-                            }
                         }
                         else
                             await DisplayAlert("Error", "Invalid Number", "OK");
 
-                        await Navigation.PopModalAsync();
+
 
                         newItemName.Text = string.Empty;
                         newItemName.Unfocus();
