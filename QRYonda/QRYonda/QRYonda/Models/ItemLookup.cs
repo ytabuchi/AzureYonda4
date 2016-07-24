@@ -35,9 +35,11 @@ namespace QRYonda.Models
 {
     public class ItemLookup
     {
-        private const string MY_AWS_ASSOCIATE_TAG = "xxxxxxxx"; // Added from sample
-        private const string MY_AWS_ACCESS_KEY_ID = "xxxxxxxx";
-        private const string MY_AWS_SECRET_KEY = "xxxxxxxx";
+        //Helpers.ApiKeys に移動
+        //private const string MY_AWS_ASSOCIATE_TAG = "xxxxxxxx";
+        //private const string MY_AWS_ACCESS_KEY_ID = "xxxxxxxx";
+        //private const string MY_AWS_SECRET_KEY = "xxxxxxxx";
+
         private const string DESTINATION = "webservices.amazon.co.jp";  // Changed from sample
 
         private const string NAMESPACE = "http://webservices.amazon.com/AWSECommerceService/2011-08-01"; // Changed from sample
@@ -55,9 +57,9 @@ namespace QRYonda.Models
                 return null;
 
             SignedRequestHelper helper = new SignedRequestHelper(
-                MY_AWS_ASSOCIATE_TAG,
-                MY_AWS_ACCESS_KEY_ID,
-                MY_AWS_SECRET_KEY,
+                Helpers.ApiKeys.MY_AWS_ASSOCIATE_TAG,
+                Helpers.ApiKeys.MY_AWS_ACCESS_KEY_ID,
+                Helpers.ApiKeys.MY_AWS_SECRET_KEY,
                 DESTINATION,
                 ID_TYPE);
 
@@ -73,7 +75,7 @@ namespace QRYonda.Models
              */
             IDictionary<string, string> r1 = new Dictionary<string, String>();
             r1["Service"] = "AWSECommerceService";
-            //r1["Version"] = "2009-03-31";
+            r1["Version"] = "2009-03-31";
             r1["Operation"] = "ItemLookup";
             r1["ItemId"] = ITEM_ID;
             r1["ResponseGroup"] = "Images,Small";
@@ -82,7 +84,7 @@ namespace QRYonda.Models
             itemInfo = await FetchTitle(requestUrl);
 
             System.Diagnostics.Debug.WriteLine("ItemLookup Dictionary form.");
-            System.Diagnostics.Debug.WriteLine($"ItemInfo is title: {itemInfo.Name}, image: {itemInfo.Image}");
+            //System.Diagnostics.Debug.WriteLine($"ItemInfo is title: {itemInfo.Name}, image: {itemInfo.Image}");
 
             return itemInfo;
         }
